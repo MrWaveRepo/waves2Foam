@@ -52,7 +52,7 @@ SourceFiles
     stokesSecond.C
 
 Author
-    Niels Gjøl Jacobsen, Technical University of Denmark.  All rights reserved.
+    Niels Gjoel Jacobsen, Technical University of Denmark.  All rights reserved.
 
 
 \*---------------------------------------------------------------------------*/
@@ -137,6 +137,17 @@ public:
             const point&,
             const scalar&
         ) const;
+
+        virtual scalar p
+        (
+            const point&,
+            const scalar&
+        ) const;
+
+        bool implementPressure() const
+        {
+            return true;
+        };
 
         virtual scalar ddxPd
         (

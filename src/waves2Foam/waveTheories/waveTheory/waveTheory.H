@@ -45,7 +45,7 @@ SourceFiles
     waveTheory.C
 
 Author
-    Niels Gjøl Jacobsen, Technical University of Denmark.  All rights reserved.
+    Niels Gjoel Jacobsen, Technical University of Denmark.  All rights reserved.
 
 
 \*---------------------------------------------------------------------------*/
@@ -86,6 +86,7 @@ protected:
         scalar rhoWater_;
         vector g_;
         vector direction_;
+        vector referenceLevel_;
 
         const dictionary coeffDict_;
 
@@ -195,7 +196,15 @@ public:
         (
             const point&,
             const scalar&
-        ) const { return 0.0; };
+        ) const
+        {
+        	return 0.0;
+        };
+
+        virtual bool implementPressure() const
+        {
+        	return false;
+        };
 
         // Access - field
         virtual scalarField eta
@@ -219,6 +228,11 @@ public:
 
         // Return the unit vertical direction in the direction of g
         const inline vector& returnDir() const { return direction_;}
+
+        // Return a reference to the dictionary
+        const inline dictionary& patchDict() const {return coeffDict_;};
+
+        const inline scalar& seaLevel() const {return seaLevel_;};
 };
 
 

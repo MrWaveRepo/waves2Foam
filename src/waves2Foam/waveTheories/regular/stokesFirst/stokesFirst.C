@@ -103,7 +103,6 @@ scalar stokesFirst::ddxPd
     const vector& unitVector
 ) const
 {
-
     scalar Z(returnZ(x));
     scalar arg(omega_*time - (k_ & x) + phi_);
 
@@ -115,6 +114,24 @@ scalar stokesFirst::ddxPd
             )*factor(time);
 
     return ddxPd;
+}
+
+
+scalar stokesFirst::p
+(
+    const point& x,
+    const scalar& time
+) const
+{
+	scalar res = 0;
+
+    scalar Z(returnZ(x));
+    scalar arg(omega_*time - (k_ & x) + phi_);
+
+    res = rhoWater_*mag(g_)*H_/2.0*Foam::cosh(K_*(Z + h_))
+        /Foam::cosh(K_*h_)*Foam::cos(arg)*factor(time);
+
+    return res;
 }
 
 

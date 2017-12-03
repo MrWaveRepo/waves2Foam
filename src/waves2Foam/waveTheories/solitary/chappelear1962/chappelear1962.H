@@ -23,12 +23,11 @@ License
     Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 Class
-    Foam::waveTheories::potentialCurrent
+    Foam::waveTheories::chappelear1962
 
 Description
-    Implementation of a potential current velocity profile, e.g. uniform
-    velocity distribution over the vertical. In the special case of
-    U = vector::zero it can be used as outlet sponge layer wave type.
+    Implementation of the solitary wave theory described in Chappelear (1962).
+    Shallow-Water Waves, Journal of Geophysical Research.
 
     A description of the general wave framework is given in
 
@@ -44,15 +43,16 @@ Description
     }
 
 SourceFiles
-    potentialCurrent.C
+    chappelear1962.C
 
 Author
-    Niels Gjoel Jacobsen, Technical University of Denmark.  All rights reserved.
+    Niels G. Jacobsen, Deltares.  All rights reserved.
+
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef potentialCurrent_H
-#define potentialCurrent_H
+#ifndef chappelear1962_H
+#define chappelear1962_H
 
 #include "waveTheory.H"
 
@@ -64,10 +64,10 @@ namespace waveTheories
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class potentialCurrent Declaration
+                         Class chappelear1962 Declaration
 \*---------------------------------------------------------------------------*/
 
-class potentialCurrent
+class chappelear1962
 :
     public waveTheory
 {
@@ -75,22 +75,39 @@ class potentialCurrent
 protected:
 
     // Protected data
-        vector U_;
-        scalar Tsoft_;
-        scalar localSeaLevel_;
+        // Read from waveProperties
+        scalar H_;
+        scalar h_;
+        vector propagationDirection_;
+        point  x0_;
+        scalar L1_;
+        scalar L3_;
+
+        // Bernoullis constant - estimate
+        scalar R_;
+
+        // Computed
+        scalar dL_;
+        scalar kappa_;
+        scalar G_;
+        scalar c_;
 
     // Protected member functions
 
-        scalar factor(const scalar&) const;
+        scalar shapeT(const point&, const scalar&) const;
+
+        scalar shapeS(const point&, const scalar&) const;
+
+        scalar factor(const scalar& ) const;
 public:
 
     //- Runtime type information
-    TypeName("potentialCurrent");
+    TypeName("chappelear1962");
 
     // Constructors
 
         //- from components
-        potentialCurrent
+        chappelear1962
         (
             const word&,
             const fvMesh& mesh_
@@ -99,21 +116,14 @@ public:
 
     // Destructor
 
-        ~potentialCurrent()
+        ~chappelear1962()
         {}
 
 
     // Member Functions
         virtual Switch conflictTSoftInitialise() const
         {
-            if (Foam::mag(U_) > SMALL && Tsoft_ > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         };
 
         void printCoeffs();
@@ -131,6 +141,12 @@ public:
             const vector&
         ) const;
 
+        virtual vector U
+        (
+            const point&,
+            const scalar&
+        ) const;
+
         virtual scalar p
         (
             const point&,
@@ -142,11 +158,6 @@ public:
             return true;
         };
 
-        virtual vector U
-        (
-            const point&,
-            const scalar&
-        ) const;
 };
 
 
